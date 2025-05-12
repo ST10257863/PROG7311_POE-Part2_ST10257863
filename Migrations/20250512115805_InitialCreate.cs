@@ -31,7 +31,7 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
-                    IsEmployee = table.Column<bool>(type: "bit", nullable: true),
+                    UserType = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -173,6 +173,26 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Customers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BillingAddress = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Customers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -227,7 +247,7 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                     Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FarmId = table.Column<int>(type: "int", nullable: false),
-                    FarmerId = table.Column<int>(type: "int", nullable: false)
+                    FarmerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -236,8 +256,7 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                         name: "FK_Products_Farmers_FarmerId",
                         column: x => x.FarmerId,
                         principalTable: "Farmers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Products_Farms_FarmId",
                         column: x => x.FarmId,
@@ -286,6 +305,12 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Customers_UserId",
+                table: "Customers",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Employees_UserId",
                 table: "Employees",
                 column: "UserId",
@@ -330,6 +355,9 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Employees");

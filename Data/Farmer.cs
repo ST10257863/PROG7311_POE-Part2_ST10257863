@@ -26,11 +26,5 @@
 		{
 			get; set;
 		}
-		// Navigation to Products
-		public ICollection<Products> Products
-		{
-			get; set;
-		}
-
 	}
 }

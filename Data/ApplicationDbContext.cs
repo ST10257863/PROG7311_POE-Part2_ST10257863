@@ -9,6 +9,7 @@ namespace PROG7311_POE_Part2_ST10257863.Data
 			: base(options)
 		{
 		}
+
 		public DbSet<Farm> Farms
 		{
 			get; set;
@@ -22,6 +23,10 @@ namespace PROG7311_POE_Part2_ST10257863.Data
 			get; set;
 		}
 		public DbSet<Products> Products
+		{
+			get; set;
+		}
+		public DbSet<Customer> Customers
 		{
 			get; set;
 		}
@@ -40,20 +45,22 @@ namespace PROG7311_POE_Part2_ST10257863.Data
 				.WithOne(e => e.User)
 				.HasForeignKey<Employee>(e => e.UserId);
 
+			builder.Entity<ApplicationUser>()
+				.HasOne(u => u.CustomerProfile)
+				.WithOne(c => c.User)
+				.HasForeignKey<Customer>(c => c.UserId);
+
 			builder.Entity<Farm>()
 				.HasMany(f => f.Farmers)
 				.WithOne(fa => fa.Farm)
-				.HasForeignKey(fa => fa.FarmId);
+				.HasForeignKey(fa => fa.FarmId)
+				.OnDelete(DeleteBehavior.Cascade); // Cascade delete Farmers
 
 			builder.Entity<Farm>()
 				.HasMany(f => f.Products)
 				.WithOne(p => p.Farm)
-				.HasForeignKey(p => p.FarmId);
-
-			builder.Entity<Farmer>()
-				.HasMany(f => f.Products)
-				.WithOne(p => p.Farmer)
-				.HasForeignKey(p => p.FarmerId);
+				.HasForeignKey(p => p.FarmId)
+				.OnDelete(DeleteBehavior.Cascade); // Cascade delete Products
 		}
 	}
 }

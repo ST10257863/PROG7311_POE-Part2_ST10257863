@@ -28,16 +28,6 @@
 		{
 			get; set;
 		}
-
-		// Foreign key to Farmer
-		public int FarmerId
-		{
-			get; set;
-		}
-		public Farmer Farmer
-		{
-			get; set;
-		}
 	}
 
 }

@@ -12,7 +12,7 @@ using PROG7311_POE_Part2_ST10257863.Data;
 namespace PROG7311_POE_Part2_ST10257863.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250508110731_InitialCreate")]
+    [Migration("20250512115805_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,6 +24,29 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BillingAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Customers");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -317,7 +340,7 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                     b.Property<int>("FarmId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FarmerId")
+                    b.Property<int?>("FarmerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -340,10 +363,21 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Property<bool>("IsEmployee")
-                        .HasColumnType("bit");
+                    b.Property<int>("UserType")
+                        .HasColumnType("int");
 
                     b.HasDiscriminator().HasValue("ApplicationUser");
+                });
+
+            modelBuilder.Entity("Customer", b =>
+                {
+                    b.HasOne("ApplicationUser", "User")
+                        .WithOne("CustomerProfile")
+                        .HasForeignKey("Customer", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -435,15 +469,11 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PROG7311_POE_Part2_ST10257863.Data.Farmer", "Farmer")
+                    b.HasOne("PROG7311_POE_Part2_ST10257863.Data.Farmer", null)
                         .WithMany("Products")
-                        .HasForeignKey("FarmerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FarmerId");
 
                     b.Navigation("Farm");
-
-                    b.Navigation("Farmer");
                 });
 
             modelBuilder.Entity("PROG7311_POE_Part2_ST10257863.Data.Farm", b =>
@@ -460,6 +490,9 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
 
             modelBuilder.Entity("ApplicationUser", b =>
                 {
+                    b.Navigation("CustomerProfile")
+                        .IsRequired();
+
                     b.Navigation("EmployeeProfile")
                         .IsRequired();
 
