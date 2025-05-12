@@ -48,32 +48,65 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// --- Optional: Seed roles and users ---
-// To enable, uncomment the following lines and the SeedRolesAsync method below.
-/*
+// --- Seed roles and test users ---
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    await SeedRolesAsync(services);
+	var services = scope.ServiceProvider;
+	await SeedRolesAndTestUsersAsync(services);
 }
-*/
 
 app.Run();
-
-#region Optional: Role Seeding
-/*
-async Task SeedRolesAsync(IServiceProvider serviceProvider)
+async Task SeedRolesAndTestUsersAsync(IServiceProvider serviceProvider)
 {
-    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roleNames = { "Employee", "Farmer", "Customer" };
+	var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+	var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    foreach (var roleName in roleNames)
-    {
-        if (!await roleManager.RoleExistsAsync(roleName))
-        {
-            await roleManager.CreateAsync(new IdentityRole(roleName));
-        }
-    }
+	string[] roleNames = { "Employee", "Farmer", "Customer" };
+	string defaultPassword = "Test@123"; // Change as needed
+
+	// Ensure roles exist
+	foreach (var roleName in roleNames)
+	{
+		if (!await roleManager.RoleExistsAsync(roleName))
+		{
+			await roleManager.CreateAsync(new IdentityRole(roleName));
+		}
+	}
+
+	// Test users to seed
+	var testUsers = new[]
+	{
+			new { Email = "employee@test.com", Role = "Employee", FirstName = "Test", LastName = "Employee", UserType = ApplicationUser.UserTypeEnum.Employee },
+			new { Email = "farmer@test.com", Role = "Farmer", FirstName = "Test", LastName = "Farmer", UserType = ApplicationUser.UserTypeEnum.Farmer },
+			new { Email = "customer@test.com", Role = "Customer", FirstName = "Test", LastName = "Customer", UserType = ApplicationUser.UserTypeEnum.Customer }
+		};
+
+	foreach (var testUser in testUsers)
+	{
+		var user = await userManager.FindByEmailAsync(testUser.Email);
+		if (user == null)
+		{
+			user = new ApplicationUser
+			{
+				UserName = testUser.Email,
+				Email = testUser.Email,
+				FirstName = testUser.FirstName,
+				LastName = testUser.LastName,
+				UserType = testUser.UserType
+			};
+			var result = await userManager.CreateAsync(user, defaultPassword);
+			if (result.Succeeded)
+			{
+				await userManager.AddToRoleAsync(user, testUser.Role);
+			}
+		}
+		else
+		{
+			// Ensure user is in the correct role
+			if (!await userManager.IsInRoleAsync(user, testUser.Role))
+			{
+				await userManager.AddToRoleAsync(user, testUser.Role);
+			}
+		}
+	}
 }
-*/
-#endregion
