@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>PROG7311_POE_Part2_ST10257863</RootNamespace>
+    <UserSecretsId>8a2281b9-e04a-48ed-b077-423a0d1ec03c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

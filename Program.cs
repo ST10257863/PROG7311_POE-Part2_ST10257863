@@ -10,11 +10,24 @@ var connectionString = builder.Configuration.GetConnectionString("ApplicationDbC
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(connectionString)); // Use the connection string from appsettings
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-	.AddEntityFrameworkStores<ApplicationDbContext>();
+//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+
+//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+//	.AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+	options.SignIn.RequireConfirmedAccount = false)
+	.AddEntityFrameworkStores<ApplicationDbContext>()
+	.AddDefaultTokenProviders();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthorizationBuilder()
+	.AddPolicy("RequireEmployeeRole", policy => policy.RequireRole("Employee"))
+	.AddPolicy("RequireFarmerRole", policy => policy.RequireRole("Farmer"))
+	.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
+
+
 
 var app = builder.Build();
 
@@ -22,7 +35,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
 
@@ -31,10 +43,34 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
+//Seed roles and users
+
+
+//using (var scope = app.Services.CreateScope())
+//{
+//	var services = scope.ServiceProvider;
+//	await SeedRolesAsync(services);
+//}
+
 app.Run();
+
+//async Task SeedRolesAsync(IServiceProvider serviceProvider)
+//{
+//	var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//	string[] roleNames = { "Employee", "Farmer", "Customer" };
+
+//	foreach (var roleName in roleNames)
+//	{
+//		if (!await roleManager.RoleExistsAsync(roleName))
+//		{
+//			await roleManager.CreateAsync(new IdentityRole(roleName));
+//		}
+//	}
+//}
