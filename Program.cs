@@ -4,25 +4,35 @@ using PROG7311_POE_Part2_ST10257863.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Retrieve the connection string from appsettings.json
+// --- Configure Services ---
+
+// Database context
 var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection");
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(connectionString)); // Use the connection string from appsettings
+	options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-	.AddEntityFrameworkStores<ApplicationDbContext>();
+// Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+	options.SignIn.RequireConfirmedAccount = false)
+	.AddEntityFrameworkStores<ApplicationDbContext>()
+	.AddDefaultTokenProviders();
 
-// Add services to the container.
+// MVC & Razor Pages
 builder.Services.AddControllersWithViews();
+
+// Authorization policies
+builder.Services.AddAuthorizationBuilder()
+	.AddPolicy("RequireEmployeeRole", policy => policy.RequireRole("Employee"))
+	.AddPolicy("RequireFarmerRole", policy => policy.RequireRole("Farmer"))
+	.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- Configure Middleware ---
+
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
 
@@ -31,10 +41,72 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// --- Seed roles and test users ---
+using (var scope = app.Services.CreateScope())
+{
+	var services = scope.ServiceProvider;
+	await SeedRolesAndTestUsersAsync(services);
+}
+
 app.Run();
+async Task SeedRolesAndTestUsersAsync(IServiceProvider serviceProvider)
+{
+	var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+	var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+	string[] roleNames = { "Employee", "Farmer", "Customer" };
+	string defaultPassword = "Test@123"; // Change as needed
+
+	// Ensure roles exist
+	foreach (var roleName in roleNames)
+	{
+		if (!await roleManager.RoleExistsAsync(roleName))
+		{
+			await roleManager.CreateAsync(new IdentityRole(roleName));
+		}
+	}
+
+	// Test users to seed
+	var testUsers = new[]
+	{
+			new { Email = "employee@test.com", Role = "Employee", FirstName = "Test", LastName = "Employee", UserType = ApplicationUser.UserTypeEnum.Employee },
+			new { Email = "farmer@test.com", Role = "Farmer", FirstName = "Test", LastName = "Farmer", UserType = ApplicationUser.UserTypeEnum.Farmer },
+			new { Email = "customer@test.com", Role = "Customer", FirstName = "Test", LastName = "Customer", UserType = ApplicationUser.UserTypeEnum.Customer }
+		};
+
+	foreach (var testUser in testUsers)
+	{
+		var user = await userManager.FindByEmailAsync(testUser.Email);
+		if (user == null)
+		{
+			user = new ApplicationUser
+			{
+				UserName = testUser.Email,
+				Email = testUser.Email,
+				FirstName = testUser.FirstName,
+				LastName = testUser.LastName,
+				UserType = testUser.UserType
+			};
+			var result = await userManager.CreateAsync(user, defaultPassword);
+			if (result.Succeeded)
+			{
+				await userManager.AddToRoleAsync(user, testUser.Role);
+			}
+		}
+		else
+		{
+			// Ensure user is in the correct role
+			if (!await userManager.IsInRoleAsync(user, testUser.Role))
+			{
+				await userManager.AddToRoleAsync(user, testUser.Role);
+			}
+		}
+	}
+}

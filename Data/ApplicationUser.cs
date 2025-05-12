@@ -10,6 +10,9 @@ public class ApplicationUser : IdentityUser
 		Employee
 	}
 
+	public string FirstName { get; set; } = string.Empty;
+	public string LastName { get; set; } = string.Empty;
+
 	// Indicates the current type/status of the user
 	public UserTypeEnum UserType { get; set; } = UserTypeEnum.Customer;
 
