@@ -1,47 +1,54 @@
 ﻿@model PROG7311_POE_Part2_ST10257863.Models.AddFarmerViewModel
 
 @{
-    ViewData["Title"] = "Add Farmer";
+	ViewData["Title"] = "Add Farmer";
 }
 
 <h2>@ViewData["Title"]</h2>
 
+@if (TempData["SuccessMessage"] != null)
+{
+	<div class="alert alert-success">
+		@TempData["SuccessMessage"]
+	</div>
+}
+
 <form asp-action="AddFarmer" method="post" class="mt-4">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+	<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="form-group mb-3">
-        <label asp-for="FirstName" class="form-label"></label>
-        <input asp-for="FirstName" class="form-control" />
-        <span asp-validation-for="FirstName" class="text-danger"></span>
-    </div>
+	<div class="form-group mb-3">
+		<label asp-for="FirstName" class="form-label"></label>
+		<input asp-for="FirstName" class="form-control" />
+		<span asp-validation-for="FirstName" class="text-danger"></span>
+	</div>
 
-    <div class="form-group mb-3">
-        <label asp-for="LastName" class="form-label"></label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
-    </div>
+	<div class="form-group mb-3">
+		<label asp-for="LastName" class="form-label"></label>
+		<input asp-for="LastName" class="form-control" />
+		<span asp-validation-for="LastName" class="text-danger"></span>
+	</div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
+	<div class="form-group mb-3">
+		<label asp-for="Email" class="form-label"></label>
+		<input asp-for="Email" class="form-control" />
+		<span asp-validation-for="Email" class="text-danger"></span>
+	</div>
 
-    <div class="form-group mb-3">
-        <label asp-for="Password" class="form-label"></label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
+	<div class="form-group mb-3">
+		<label asp-for="Password" class="form-label"></label>
+		<input asp-for="Password" class="form-control" />
+		<span asp-validation-for="Password" class="text-danger"></span>
+	</div>
 
-    <div class="form-group mb-3">
-        <label asp-for="ConfirmPassword" class="form-label"></label>
-        <input asp-for="ConfirmPassword" class="form-control" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
+	<div class="form-group mb-3">
+		<label asp-for="ConfirmPassword" class="form-label"></label>
+		<input asp-for="ConfirmPassword" class="form-control" />
+		<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+	</div>
 
-    <button type="submit" class="btn btn-primary">Register</button>
+	<button type="submit" class="btn btn-primary">Register Farmer</button>
 </form>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+	<partial name="_ValidationScriptsPartial" />
 }
