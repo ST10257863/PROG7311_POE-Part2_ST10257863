@@ -56,13 +56,13 @@ namespace PROG7311_POE_Part2_ST10257863.Data
 				.HasMany(f => f.Farmers)
 				.WithOne(fa => fa.Farm)
 				.HasForeignKey(fa => fa.FarmId)
-				.OnDelete(DeleteBehavior.Cascade); // Cascade delete Farmers
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.Entity<Farm>()
 				.HasMany(f => f.Products)
 				.WithOne(p => p.Farm)
 				.HasForeignKey(p => p.FarmId)
-				.OnDelete(DeleteBehavior.Cascade); // Cascade delete Products
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 		private void SeedFarmsAndProducts(ModelBuilder modelBuilder)
 		{
