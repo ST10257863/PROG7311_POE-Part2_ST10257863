@@ -1,0 +1,107 @@
+﻿@model IEnumerable<PROG7311_POE_Part2_ST10257863.Data.Products>
+
+@{
+	ViewData["Title"] = "Products";
+	var categories = ViewBag.Categories as List<string>;
+	var farms = ViewBag.Farms as List<PROG7311_POE_Part2_ST10257863.Data.Farm>;
+	var sortedProducts = Model.OrderBy(p => p.Name).ToList();
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["Message"] != null)
+{
+	<div class="alert alert-success">@TempData["Message"]</div>
+}
+@if (TempData["Error"] != null)
+{
+	<div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+
+
+<form id="filterForm" onsubmit="return false;">
+	<input type="text" id="searchString" placeholder="Search by name..." />
+	<select id="category">
+		<option value="">All Categories</option>
+		@foreach (var cat in categories ?? new List<string>())
+		{
+			<option value="@cat">@cat</option>
+		}
+	</select>
+	<select id="farmId">
+		<option value="">All Farms</option>
+		@foreach (var farm in farms ?? new List<PROG7311_POE_Part2_ST10257863.Data.Farm>())
+		{
+			<option value="@farm.Id">@farm.Name</option>
+		}
+	</select>
+	<button type="button" onclick="filterTable()">Filter</button>
+</form>
+
+@if (!Model.Any())
+{
+	<div>No products found.</div>
+}
+else
+{
+	<div style="max-height: 70vh; overflow-y: auto;">
+
+		<table class="table table-striped" id="productsTable">
+			<thead>
+				<tr>
+					<th>Product Name</th>
+					<th>Category</th>
+					<th>Production Date</th>
+					<th>Farm Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var product in sortedProducts)
+				{
+					<tr data-category="@product.Category" data-farm="@product.FarmId" data-name="@product.Name">
+						<td>@product.Name</td>
+						<td>@product.Category</td>
+						<td>@product.ProductionDate.ToString("yyyy-MM-dd")</td>
+						<td>@product.Farm?.Name</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+@section Scripts {
+	<script>
+		function filterTable() {
+			var search = document.getElementById('searchString').value.toLowerCase();
+			var category = document.getElementById('category').value;
+			var farmId = document.getElementById('farmId').value;
+
+			var rows = document.querySelectorAll('#productsTable tbody tr');
+			rows.forEach(function(row) {
+				var name = row.getAttribute('data-name').toLowerCase();
+				var rowCategory = row.getAttribute('data-category');
+				var rowFarm = row.getAttribute('data-farm');
+
+				var match = true;
+
+				if (search && !name.includes(search)) {
+					match = false;
+				}
+				if (category && rowCategory !== category) {
+					match = false;
+				}
+				if (farmId && rowFarm !== farmId) {
+					match = false;
+				}
+
+				row.style.display = match ? '' : 'none';
+			});
+		}
+
+		document.getElementById('searchString').addEventListener('input', filterTable);
+		document.getElementById('category').addEventListener('change', filterTable);
+		document.getElementById('farmId').addEventListener('change', filterTable);
+	</script>
+}

@@ -20,3 +20,14 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+footer {
+    height: 80px; /* Set your desired height */
+    min-height: 80px;
+    max-height: 120px; /* Optional: limit max height */
+    background: #f8f9fa; /* Example background */
+    width: 100%;
+    position: fixed; /* Or 'fixed' if you want it always at the bottom */
+    bottom: 0;
+    overflow: auto; /* Prevents content overflow */
+}
