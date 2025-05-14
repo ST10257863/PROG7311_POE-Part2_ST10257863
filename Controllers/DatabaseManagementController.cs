@@ -34,11 +34,11 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 				await _databaseManagementService.ResetDatabaseAsync();
 				await _signInManager.SignOutAsync();
 
-				TempData["Message"] = "Database has been reset and repopulated successfully. You have been logged out.";
+				TempData["SuccessMessage"] = "Database has been reset and repopulated successfully. You have been logged out.";
 			}
 			catch (Exception ex)
 			{
-				TempData["Error"] = $"An error occurred while resetting the database: {ex.Message}";
+				TempData["ErrorMessage"] = $"An error occurred while resetting the database: {ex.Message}";
 			}
 
 			return RedirectToAction("Login", "Account");

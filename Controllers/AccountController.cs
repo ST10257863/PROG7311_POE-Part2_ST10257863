@@ -1,33 +1,38 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using PROG7311_POE_Part2_ST10257863.Data;
 using PROG7311_POE_Part2_ST10257863.Models;
+using PROG7311_POE_Part2_ST10257863.Services.Interfaces;
 
 namespace PROG7311_POE_Part2_ST10257863.Controllers
 {
 	public class AccountController : Controller
 	{
-		private readonly UserManager<ApplicationUser> _userManager;
-		private readonly SignInManager<ApplicationUser> _signInManager;
-		private readonly RoleManager<IdentityRole> _roleManager;
-		private readonly ApplicationDbContext _context;
+		private readonly IAccountService _accountService;
 
-		public AccountController(
-			UserManager<ApplicationUser> userManager,
-			SignInManager<ApplicationUser> signInManager,
-			RoleManager<IdentityRole> roleManager,
-			ApplicationDbContext context)
+		public AccountController(IAccountService accountService)
 		{
-			_userManager = userManager;
-			_signInManager = signInManager;
-			_roleManager = roleManager;
-			_context = context;
+			_accountService = accountService;
 		}
 
 		[HttpGet]
 		[AllowAnonymous]
-		public IActionResult Login() => View();
+		public IActionResult Login()
+		{
+			// Check if there's a success message in TempData
+			if (TempData["SuccessMessage"] != null)
+			{
+				ViewBag.SuccessMessage = TempData["SuccessMessage"];
+			}
+
+			// Check if there's an error message in TempData
+			if (TempData["ErrorMessage"] != null)
+			{
+				ViewBag.ErrorMessage = TempData["ErrorMessage"];
+			}
+
+			return View();
+		}
 
 		[HttpPost]
 		[AllowAnonymous]
@@ -36,15 +41,7 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			if (!ModelState.IsValid)
 				return View(model);
 
-			var user = await _userManager.FindByEmailAsync(model.Email);
-			if (user == null)
-			{
-				ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-				return View(model);
-			}
-
-			var result = await _signInManager.PasswordSignInAsync(
-				user.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+			var result = await _accountService.LoginAsync(model);
 
 			if (result.Succeeded)
 			{
@@ -59,10 +56,9 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Logout()
 		{
-			await _signInManager.SignOutAsync();
+			await _accountService.LogoutAsync();
 			return RedirectToAction("Login", "Account");
 		}
-
 
 		[HttpGet]
 		[Authorize(Roles = "Employee")]
@@ -75,42 +71,10 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			if (!ModelState.IsValid)
 				return View("AddFarmer", model);
 
-			var existingUser = await _userManager.FindByEmailAsync(model.Email);
-			if (existingUser != null)
-			{
-				ModelState.AddModelError("Email", "Email is already registered.");
-				return View("AddFarmer", model);
-			}
+			var result = await _accountService.AddFarmerAsync(model);
 
-			var user = new ApplicationUser
-			{
-				UserName = model.Email,
-				Email = model.Email,
-				FirstName = model.FirstName,
-				LastName = model.LastName,
-				UserType = ApplicationUser.UserTypeEnum.Farmer
-			};
-
-			var result = await _userManager.CreateAsync(user, model.Password);
 			if (result.Succeeded)
 			{
-				// Ensure the "Farmer" role exists
-				if (!await _roleManager.RoleExistsAsync("Farmer"))
-				{
-					await _roleManager.CreateAsync(new IdentityRole("Farmer"));
-				}
-
-				// Assign the "Farmer" role
-				await _userManager.AddToRoleAsync(user, "Farmer");
-
-				// Add to Farmer table
-				var farmer = new Farmer
-				{
-					UserId = user.Id
-				};
-				_context.Farmers.Add(farmer);
-				await _context.SaveChangesAsync();
-
 				TempData["SuccessMessage"] = "Farmer account created successfully.";
 				return RedirectToAction("AddFarmer");
 			}
