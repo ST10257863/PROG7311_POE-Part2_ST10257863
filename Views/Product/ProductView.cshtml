@@ -38,7 +38,9 @@
 				</option>
 			}
 		</select>
+		<label for="startDate">From date:</label>
 		<input type="date" id="startDate" placeholder="Start Date" />
+		<label for="endDate">To date:</label>
 		<input type="date" id="endDate" placeholder="End Date" />
 	}
 </form>
@@ -56,7 +58,10 @@ else
 					<th>Product Name</th>
 					<th>Category</th>
 					<th>Production Date</th>
-					<th>Farmer</th>
+					@if (User.IsInRole("Employee"))
+					{
+						<th>Farmer</th>
+					}
 				</tr>
 			</thead>
 			<tbody>
@@ -66,11 +71,14 @@ else
 						<td>@product.Name</td>
 						<td>@product.Category.Name</td>
 						<td>@product.ProductionDate.ToString("yyyy-MM-dd")</td>
-						<td>
-							@(product.Farmer?.User != null
-														? $"{product.Farmer.User.FirstName} {product.Farmer.User.LastName}"
-														: $"Farmer #{product.FarmerId}")
-						</td>
+						@if (User.IsInRole("Employee"))
+						{
+							<td>
+								@(product.Farmer?.User != null
+															? $"{product.Farmer.User.FirstName} {product.Farmer.User.LastName}"
+															: $"Farmer #{product.FarmerId}")
+							</td>
+						}
 					</tr>
 				}
 			</tbody>
@@ -91,6 +99,7 @@ else
 		<a asp-controller="DatabaseManagement" asp-action="DatabaseManagement" class="btn btn-warning">Database Management</a>
 	</div>
 }
+
 @section Scripts {
 	<script>
 		function filterTable() {
@@ -98,8 +107,10 @@ else
 			var category = document.getElementById('category').value;
 			var farmerIdElem = document.getElementById('farmerId');
 			var farmerId = farmerIdElem ? farmerIdElem.value : "";
-			var startDate = document.getElementById('startDate').value;
-			var endDate = document.getElementById('endDate').value;
+			var startDateElem = document.getElementById('startDate');
+			var endDateElem = document.getElementById('endDate');
+			var startDate = startDateElem ? startDateElem.value : "";
+			var endDate = endDateElem ? endDateElem.value : "";
 
 			var rows = document.querySelectorAll('#productsTable tbody tr');
 			rows.forEach(function(row) {
@@ -116,13 +127,13 @@ else
 				if (category && rowCategory !== category) {
 					match = false;
 				}
-				if (farmerId && rowFarmer !== farmerId) {
+				if (farmerIdElem && farmerId && rowFarmer !== farmerId) {
 					match = false;
 				}
-				if (startDate && new Date(startDate) > productionDate) {
+				if (startDateElem && startDate && new Date(startDate) > productionDate) {
 					match = false;
 				}
-				if (endDate && new Date(endDate) < productionDate) {
+				if (endDateElem && endDate && new Date(endDate) < productionDate) {
 					match = false;
 				}
 
@@ -132,14 +143,23 @@ else
 
 		document.getElementById('searchString').addEventListener('input', filterTable);
 		document.getElementById('category').addEventListener('change', filterTable);
-		if (document.getElementById('farmerId')) {
-			document.getElementById('farmerId').addEventListener('change', filterTable);
+
+		var farmerIdElem = document.getElementById('farmerId');
+		if (farmerIdElem) {
+			farmerIdElem.addEventListener('change', filterTable);
 		}
-		if (document.getElementById('startDate')) {
-			document.getElementById('startDate').addEventListener('change', filterTable);
+
+		var startDateElem = document.getElementById('startDate');
+		if (startDateElem) {
+			startDateElem.addEventListener('change', filterTable);
 		}
-		if (document.getElementById('endDate')) {
-			document.getElementById('endDate').addEventListener('change', filterTable);
+
+		var endDateElem = document.getElementById('endDate');
+		if (endDateElem) {
+			endDateElem.addEventListener('change', filterTable);
 		}
+
+		// Initial filter on page load
+		filterTable();
 	</script>
 }
