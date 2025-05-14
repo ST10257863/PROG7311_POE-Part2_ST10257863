@@ -17,7 +17,7 @@
 			get; set;
 		}
 
-		public ICollection<Products> Products
+		public ICollection<Product> Products
 		{
 			get; set;
 		} // Navigation property

@@ -25,6 +25,18 @@ builder.Services.AddAuthorizationBuilder()
 	.AddPolicy("RequireEmployeeRole", policy => policy.RequireRole("Employee"))
 	.AddPolicy("RequireFarmerRole", policy => policy.RequireRole("Farmer"));
 
+builder.Services.AddRazorPages(options =>
+{
+	options.Conventions.AuthorizeFolder("/"); // Require auth for all pages
+	options.Conventions.AllowAnonymousToPage("/Account/Login"); // Allow anonymous access to login
+});
+
+//Redirect on Access Denied or Unauthorized
+builder.Services.ConfigureApplicationCookie(options =>
+{
+	options.LoginPath = "/Account/Login";
+	options.AccessDeniedPath = "/Account/AccessDenied";
+});
 
 var app = builder.Build();
 

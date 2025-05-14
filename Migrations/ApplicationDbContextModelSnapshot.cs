@@ -229,6 +229,23 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("PROG7311_POE_Part2_ST10257863.Data.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("PROG7311_POE_Part2_ST10257863.Data.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -269,7 +286,7 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                     b.ToTable("Farmers");
                 });
 
-            modelBuilder.Entity("PROG7311_POE_Part2_ST10257863.Data.Products", b =>
+            modelBuilder.Entity("PROG7311_POE_Part2_ST10257863.Data.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -277,10 +294,8 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<int>("FarmerId")
                         .HasColumnType("int");
@@ -294,6 +309,8 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("FarmerId");
 
@@ -391,15 +408,28 @@ namespace PROG7311_POE_Part2_ST10257863.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PROG7311_POE_Part2_ST10257863.Data.Products", b =>
+            modelBuilder.Entity("PROG7311_POE_Part2_ST10257863.Data.Product", b =>
                 {
+                    b.HasOne("PROG7311_POE_Part2_ST10257863.Data.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PROG7311_POE_Part2_ST10257863.Data.Farmer", "Farmer")
                         .WithMany("Products")
                         .HasForeignKey("FarmerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Category");
+
                     b.Navigation("Farmer");
+                });
+
+            modelBuilder.Entity("PROG7311_POE_Part2_ST10257863.Data.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("PROG7311_POE_Part2_ST10257863.Data.Farmer", b =>

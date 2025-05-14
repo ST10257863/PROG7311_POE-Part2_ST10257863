@@ -1,0 +1,11 @@
+﻿@page
+
+@{
+    var title = "Access Denied";
+}
+<h2>@title</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}

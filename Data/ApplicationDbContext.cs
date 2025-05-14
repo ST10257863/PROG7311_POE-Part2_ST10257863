@@ -18,10 +18,15 @@ namespace PROG7311_POE_Part2_ST10257863.Data
 		{
 			get; set;
 		}
-		public DbSet<Products> Products
+		public DbSet<Product> Products
 		{
 			get; set;
 		}
+		public DbSet<Category> Categories
+		{
+			get; set;
+		}
+
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -41,6 +46,12 @@ namespace PROG7311_POE_Part2_ST10257863.Data
 				.HasMany(f => f.Products)
 				.WithOne(p => p.Farmer)
 				.HasForeignKey(p => p.FarmerId)
+				.IsRequired();
+
+			builder.Entity<Category>()
+				.HasMany(c => c.Products)
+				.WithOne(p => p.Category)
+				.HasForeignKey(p => p.CategoryId)
 				.IsRequired();
 		}
 	}
