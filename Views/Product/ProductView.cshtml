@@ -27,16 +27,20 @@
 			<option value="@cat.Name">@cat.Name</option>
 		}
 	</select>
-	<select id="farmerId">
-		<option value="">All Farmers</option>
-		@foreach (var farmer in farmers ?? new List<PROG7311_POE_Part2_ST10257863.Data.Farmer>())
-		{
-			<option value="@farmer.Id">
-				@(farmer.User != null ? $"{farmer.User.FirstName} {farmer.User.LastName}" : $"Farmer #{farmer.Id}")
-			</option>
-		}
-	</select>
-	<button type="button" onclick="filterTable()">Filter</button>
+	@if (User.IsInRole("Employee"))
+	{
+		<select id="farmerId">
+			<option value="">All Farmers</option>
+			@foreach (var farmer in farmers ?? new List<PROG7311_POE_Part2_ST10257863.Data.Farmer>())
+			{
+				<option value="@farmer.Id">
+					@(farmer.User != null ? $"{farmer.User.FirstName} {farmer.User.LastName}" : $"Farmer #{farmer.Id}")
+				</option>
+			}
+		</select>
+		<input type="date" id="startDate" placeholder="Start Date" />
+		<input type="date" id="endDate" placeholder="End Date" />
+	}
 </form>
 
 @if (!Model.Any())
@@ -46,7 +50,7 @@
 else
 {
 	<div style="max-height: 70vh; overflow-y: auto;">
-		<table class="table table-striped" id="productsTable">
+		<table class="table" id="productsTable">
 			<thead>
 				<tr>
 					<th>Product Name</th>
@@ -94,12 +98,15 @@ else
 			var category = document.getElementById('category').value;
 			var farmerIdElem = document.getElementById('farmerId');
 			var farmerId = farmerIdElem ? farmerIdElem.value : "";
+			var startDate = document.getElementById('startDate').value;
+			var endDate = document.getElementById('endDate').value;
 
 			var rows = document.querySelectorAll('#productsTable tbody tr');
 			rows.forEach(function(row) {
 				var name = row.getAttribute('data-name').toLowerCase();
 				var rowCategory = row.getAttribute('data-category');
 				var rowFarmer = row.getAttribute('data-farmer');
+				var productionDate = new Date(row.cells[2].innerText);
 
 				var match = true;
 
@@ -112,6 +119,12 @@ else
 				if (farmerId && rowFarmer !== farmerId) {
 					match = false;
 				}
+				if (startDate && new Date(startDate) > productionDate) {
+					match = false;
+				}
+				if (endDate && new Date(endDate) < productionDate) {
+					match = false;
+				}
 
 				row.style.display = match ? '' : 'none';
 			});
@@ -121,6 +134,12 @@ else
 		document.getElementById('category').addEventListener('change', filterTable);
 		if (document.getElementById('farmerId')) {
 			document.getElementById('farmerId').addEventListener('change', filterTable);
+		}
+		if (document.getElementById('startDate')) {
+			document.getElementById('startDate').addEventListener('change', filterTable);
+		}
+		if (document.getElementById('endDate')) {
+			document.getElementById('endDate').addEventListener('change', filterTable);
 		}
 	</script>
 }
