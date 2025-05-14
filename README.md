@@ -12,7 +12,7 @@ This project is an ASP.NET Core web application for managing agricultural produc
 
 1. **Clone the Repository**
   ```
-  git clone https://github.com/your-username/PROG7311_POE-Part2_ST10257863.git
+  git clone https://github.com/ST10257863/PROG7311_POE-Part2_ST10257863.git
   cd PROG7311_POE-Part2_ST10257863
   ```
 2. **Restore Dependencies**
