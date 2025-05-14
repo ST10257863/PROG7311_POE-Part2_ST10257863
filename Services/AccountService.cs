@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using PROG7311_POE_Part2_ST10257863.Data;
 using PROG7311_POE_Part2_ST10257863.Models;
+using PROG7311_POE_Part2_ST10257863.Services.Interfaces;
 
 namespace PROG7311_POE_Part2_ST10257863.Services
 {

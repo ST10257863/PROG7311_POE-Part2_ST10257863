@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_POE_Part2_ST10257863.Data;
 using PROG7311_POE_Part2_ST10257863.Services;
+using PROG7311_POE_Part2_ST10257863.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +42,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Services
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IDatabaseManagementService, DatabaseManagementService>();
 
 var app = builder.Build();

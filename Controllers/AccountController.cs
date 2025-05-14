@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PROG7311_POE_Part2_ST10257863.Models;
-using PROG7311_POE_Part2_ST10257863.Services;
+using PROG7311_POE_Part2_ST10257863.Services.Interfaces;
 
 namespace PROG7311_POE_Part2_ST10257863.Controllers
 {
