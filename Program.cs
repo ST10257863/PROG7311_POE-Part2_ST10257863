@@ -25,6 +25,20 @@ builder.Services.AddAuthorizationBuilder()
 	.AddPolicy("RequireEmployeeRole", policy => policy.RequireRole("Employee"))
 	.AddPolicy("RequireFarmerRole", policy => policy.RequireRole("Farmer"));
 
+builder.Services.AddRazorPages(options =>
+{
+	options.Conventions.AuthorizeFolder("/"); // Require auth for all pages
+	options.Conventions.AllowAnonymousToPage("/Account/Login"); // Allow anonymous access to login
+});
+
+//Redirect on Access Denied or Unauthorized
+builder.Services.ConfigureApplicationCookie(options =>
+{
+	options.LoginPath = "/Account/Login";
+	options.AccessDeniedPath = "/Account/AccessDenied";
+});
+
+builder.Services.AddScoped<IDatabaseManagementService, DatabaseManagementService>();
 
 var app = builder.Build();
 
@@ -48,64 +62,4 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Account}/{action=Login}/{id?}");
 
-// --- Seed roles and test users ---
-using (var scope = app.Services.CreateScope())
-{
-	var services = scope.ServiceProvider;
-	await SeedRolesAndTestUsersAsync(services);
-}
-
 app.Run();
-async Task SeedRolesAndTestUsersAsync(IServiceProvider serviceProvider)
-{
-	var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-	var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-	string[] roleNames = { "Employee", "Farmer" };
-	string defaultPassword = "Test@123"; // Change as needed
-
-	// Ensure roles exist
-	foreach (var roleName in roleNames)
-	{
-		if (!await roleManager.RoleExistsAsync(roleName))
-		{
-			await roleManager.CreateAsync(new IdentityRole(roleName));
-		}
-	}
-
-	// Test users to seed
-	var testUsers = new[]
-	{
-		new { Email = "employee@test.com", Role = "Employee", FirstName = "Test", LastName = "Employee", UserType = ApplicationUser.UserTypeEnum.Employee },
-		new { Email = "farmer@test.com", Role = "Farmer", FirstName = "Test", LastName = "Farmer", UserType = ApplicationUser.UserTypeEnum.Farmer },
-	};
-
-	foreach (var testUser in testUsers)
-	{
-		var user = await userManager.FindByEmailAsync(testUser.Email);
-		if (user == null)
-		{
-			user = new ApplicationUser
-			{
-				UserName = testUser.Email,
-				Email = testUser.Email,
-				FirstName = testUser.FirstName,
-				LastName = testUser.LastName,
-				UserType = testUser.UserType
-			};
-			var result = await userManager.CreateAsync(user, defaultPassword);
-			if (result.Succeeded)
-			{
-				await userManager.AddToRoleAsync(user, testUser.Role);
-			}
-		}
-		else
-		{
-			// Ensure user is in the correct role
-			if (!await userManager.IsInRoleAsync(user, testUser.Role))
-			{
-				await userManager.AddToRoleAsync(user, testUser.Role);
-			}
-		}
-	}
-}

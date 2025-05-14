@@ -1,53 +1,111 @@
-﻿@model PROG7311_POE_Part2_ST10257863.Data.Products
+﻿@model PROG7311_POE_Part2_ST10257863.Data.Product
 
 @{
-    ViewBag.Title = "Add Product";
-    var categories = ViewBag.Categories as List<string>;
+	ViewBag.Title = "Add Product";
 }
 
 <h2>Add Product</h2>
+
 @if (TempData["Message"] != null)
 {
-    <div class="alert alert-success">@TempData["Message"]</div>
+	<div class="alert alert-success">@TempData["Message"]</div>
 }
 @if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger">@TempData["Error"]</div>
+	<div class="alert alert-danger">@TempData["Error"]</div>
 }
 
 <form asp-action="AddProduct" method="post">
-    <div class="form-group mb-3">
-        <label asp-for="Name" class="form-label">Product Name</label>
-        <input asp-for="Name" class="form-control" required />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="ProductionDate" class="form-label">Production Date</label>
-        <input asp-for="ProductionDate" type="date" class="form-control" required />
-        <span asp-validation-for="ProductionDate" class="text-danger"></span>
-    </div>
-    <div class="form-group mb-3">
-        <label asp-for="Category" class="form-label">Category</label>
-        <div class="input-group">
-            <select asp-for="Category" class="form-select" required>
-                <option value="">-- Select Category --</option>
-                @foreach (var cat in categories ?? new List<string>())
-                {
-                    <option value="@cat">@cat</option>
-                }
-            </select>
-            <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='@Url.Action("AddCategory", "Product")'">Add Category</button>
-        </div>
-        <span asp-validation-for="Category" class="text-danger"></span>
-    </div>
-    <!-- Hidden FarmerId field -->
-    <input type="hidden" asp-for="FarmerId" />
-    <div class="form-group mt-4">
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <a asp-action="ProductView" class="btn btn-secondary ms-2">Cancel</a>
-    </div>
+	<div class="form-group mb-3">
+		<label asp-for="Name" class="form-label">Product Name</label>
+		<input asp-for="Name" class="form-control" required />
+		<span asp-validation-for="Name" class="text-danger"></span>
+	</div>
+	<div class="form-group mb-3">
+		<label asp-for="ProductionDate" class="form-label">Production Date</label>
+		<input asp-for="ProductionDate" type="date" class="form-control" required />
+		<span asp-validation-for="ProductionDate" class="text-danger"></span>
+	</div>
+	<div class="form-group mb-3">
+		<label asp-for="Category" class="form-label">Category</label>
+		<div class="input-group">
+			<select asp-for="CategoryId" class="form-select" required asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
+				<option value="">-- Select Category --</option>
+			</select>
+			<button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
+		</div>
+		<span asp-validation-for="CategoryId" class="text-danger"></span>
+		<span asp-validation-for="Category" class="text-danger"></span>
+	</div>
+	<input type="hidden" asp-for="FarmerId" />
+	<div class="form-group mt-4">
+		<button type="submit" class="btn btn-primary">Submit</button>
+		<a asp-action="ProductView" class="btn btn-secondary ms-2">Cancel</a>
+	</div>
 </form>
 
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="newCategoryName" class="form-label">Category Name</label>
+					<input type="text" class="form-control" id="newCategoryName" required>
+				</div>
+				<div id="categoryError" class="text-danger"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" id="saveCategoryBtn">Save Category</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+	<partial name="_ValidationScriptsPartial" />
+	<script>
+		document.getElementById('saveCategoryBtn').addEventListener('click', function () {
+			var name = document.getElementById('newCategoryName').value.trim();
+			var errorDiv = document.getElementById('categoryError');
+			errorDiv.textContent = '';
+
+			if (!name) {
+				errorDiv.textContent = 'Category name is required.';
+				return;
+			}
+
+			fetch('@Url.Action("AddCategory", "Product")', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+				},
+				body: 'categoryName=' + encodeURIComponent(name)
+			})
+			.then(response => {
+				if (!response.ok) return response.text().then(text => { throw new Error(text); });
+				return response.json();
+			})
+			.then(data => {
+				var select = document.querySelector('select[name="CategoryId"]');
+				var option = document.createElement('option');
+				option.value = data.id;
+				option.text = data.name;
+				option.selected = true;
+				select.appendChild(option);
+
+				var modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+				modal.hide();
+				document.getElementById('newCategoryName').value = '';
+			})
+			.catch(error => {
+				errorDiv.textContent = error.message;
+			});
+		});
+	</script>
 }

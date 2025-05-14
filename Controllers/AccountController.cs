@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PROG7311_POE_Part2_ST10257863.Data;
 using PROG7311_POE_Part2_ST10257863.Models;
 
 namespace PROG7311_POE_Part2_ST10257863.Controllers
@@ -9,17 +10,27 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 	{
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly RoleManager<IdentityRole> _roleManager;
+		private readonly ApplicationDbContext _context;
 
-		public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+		public AccountController(
+			UserManager<ApplicationUser> userManager,
+			SignInManager<ApplicationUser> signInManager,
+			RoleManager<IdentityRole> roleManager,
+			ApplicationDbContext context)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
+			_roleManager = roleManager;
+			_context = context;
 		}
 
 		[HttpGet]
+		[AllowAnonymous]
 		public IActionResult Login() => View();
 
 		[HttpPost]
+		[AllowAnonymous]
 		public async Task<IActionResult> Login(LoginViewModel model)
 		{
 			if (!ModelState.IsValid)
@@ -83,7 +94,23 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			var result = await _userManager.CreateAsync(user, model.Password);
 			if (result.Succeeded)
 			{
-				// Do not change the current user's role or sign them in.
+				// Ensure the "Farmer" role exists
+				if (!await _roleManager.RoleExistsAsync("Farmer"))
+				{
+					await _roleManager.CreateAsync(new IdentityRole("Farmer"));
+				}
+
+				// Assign the "Farmer" role
+				await _userManager.AddToRoleAsync(user, "Farmer");
+
+				// Add to Farmer table
+				var farmer = new Farmer
+				{
+					UserId = user.Id
+				};
+				_context.Farmers.Add(farmer);
+				await _context.SaveChangesAsync();
+
 				TempData["SuccessMessage"] = "Farmer account created successfully.";
 				return RedirectToAction("AddFarmer");
 			}
@@ -95,6 +122,5 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 
 			return View("AddFarmer", model);
 		}
-
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace PROG7311_POE_Part2_ST10257863.Data
 {
-	public class Products
+	public class Product
 	{
 
 		public int Id
@@ -17,9 +17,15 @@ namespace PROG7311_POE_Part2_ST10257863.Data
 			get; set;
 		}
 
+		// Foreign key property
 		[Required(ErrorMessage = "Category is required.")]
-		[StringLength(50, ErrorMessage = "Category cannot exceed 50 characters.")]
-		public string Category
+		public int CategoryId
+		{
+			get; set;
+		}
+
+		// Navigation property
+		public Category? Category
 		{
 			get; set;
 		}
@@ -35,11 +41,12 @@ namespace PROG7311_POE_Part2_ST10257863.Data
 		public int FarmerId
 		{
 			get; set;
-		} // Foreign key property
+		}
 
+		// Navigation property
 		public Farmer? Farmer
 		{
 			get; set;
-		} // Navigation property
+		}
 	}
 }

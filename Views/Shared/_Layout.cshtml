@@ -43,6 +43,12 @@
 								</li>
 							}
 						}
+						@if (User.IsInRole("Employee"))
+						{
+							<li class="nav-item">
+								<a class="nav-link text-dark" asp-area="" asp-controller="DatabaseManagement" asp-action="DatabaseManagement">Database Management</a>
+							</li>
+						}
 						@if (SignInManager.IsSignedIn(User))
 						{
 							var user = await UserManager.GetUserAsync(User);

@@ -1,7 +1,7 @@
-﻿@model IEnumerable<PROG7311_POE_Part2_ST10257863.Data.Products>
+﻿@model IEnumerable<PROG7311_POE_Part2_ST10257863.Data.Product>
 
 @{
-	ViewData["Title"] = "Products";
+	ViewData["Title"] = "Product";
 	var categories = ViewBag.Categories as List<string>;
 	var farmers = ViewBag.Farmers as List<PROG7311_POE_Part2_ST10257863.Data.Farmer>;
 	var sortedProducts = Model.OrderBy(p => p.Name).ToList();
@@ -22,9 +22,9 @@
 	<input type="text" id="searchString" placeholder="Search by name..." />
 	<select id="category">
 		<option value="">All Categories</option>
-		@foreach (var cat in categories ?? new List<string>())
+		@foreach (var cat in ViewBag.Categories)
 		{
-			<option value="@cat">@cat</option>
+			<option value="@cat.Name">@cat.Name</option>
 		}
 	</select>
 	<select id="farmerId">
@@ -58,9 +58,9 @@ else
 			<tbody>
 				@foreach (var product in sortedProducts)
 				{
-					<tr data-category="@product.Category" data-farmer="@product.FarmerId" data-name="@product.Name">
+					<tr data-category="@product.Category.Name" data-farmer="@product.FarmerId" data-name="@product.Name">
 						<td>@product.Name</td>
-						<td>@product.Category</td>
+						<td>@product.Category.Name</td>
 						<td>@product.ProductionDate.ToString("yyyy-MM-dd")</td>
 						<td>
 							@(product.Farmer?.User != null
@@ -81,6 +81,12 @@ else
 	</div>
 }
 
+@if (User.IsInRole("Employee"))
+{
+	<div class="mt-3">
+		<a asp-controller="DatabaseManagement" asp-action="DatabaseManagement" class="btn btn-warning">Database Management</a>
+	</div>
+}
 @section Scripts {
 	<script>
 		function filterTable() {
