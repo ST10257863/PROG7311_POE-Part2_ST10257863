@@ -9,17 +9,28 @@ public class ApplicationUser : IdentityUser
 		Employee
 	}
 
-	public string FirstName { get; set; } = string.Empty;
-	public string LastName { get; set; } = string.Empty;
+	public UserTypeEnum UserType
+	{
+		get; set;
+	}
+
+	public string FirstName
+	{
+		get; set;
+	} = string.Empty;
+	public string LastName
+	{
+		get; set;
+	} = string.Empty;
 
 	// Navigation property for Employee profile
-	public Employee EmployeeProfile
+	public Employee? EmployeeProfile
 	{
 		get; set;
 	}
 
 	// Navigation property for Farmer profile
-	public Farmer FarmerProfile
+	public Farmer? FarmerProfile
 	{
 		get; set;
 	}

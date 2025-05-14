@@ -76,9 +76,9 @@ async Task SeedRolesAndTestUsersAsync(IServiceProvider serviceProvider)
 	// Test users to seed
 	var testUsers = new[]
 	{
-			new { Email = "employee@test.com", Role = "Employee", FirstName = "Test", LastName = "Employee", UserType = ApplicationUser.UserTypeEnum.Employee },
-			new { Email = "farmer@test.com", Role = "Farmer", FirstName = "Test", LastName = "Farmer", UserType = ApplicationUser.UserTypeEnum.Farmer },
-		};
+		new { Email = "employee@test.com", Role = "Employee", FirstName = "Test", LastName = "Employee", UserType = ApplicationUser.UserTypeEnum.Employee },
+		new { Email = "farmer@test.com", Role = "Farmer", FirstName = "Test", LastName = "Farmer", UserType = ApplicationUser.UserTypeEnum.Farmer },
+	};
 
 	foreach (var testUser in testUsers)
 	{
