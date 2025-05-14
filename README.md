@@ -68,11 +68,6 @@ If logged in as a farmer:
 5. **Logout**
 - Use the "Logout" button to end your session.
 
-## Additional Notes
-- The application uses SQLite for development. For production, consider changing to a more robust database system.
-- Ensure all CRUD operations (Create, Read, Update, Delete) for products and farmers are thoroughly tested.
-- Test the application's responsiveness on different devices and screen sizes.
-
 ## Troubleshooting
-- If you encounter any issues with database migrations, try deleting the `Migrations` folder and running `dotnet ef migrations add InitialCreate` followed by `dotnet ef database update`.
+- If you encounter any issues with database migrations, try deleting the `Migrations` folder and running `Add-Migration InitialCreate` followed by `Update-Database`.
 - For any other issues, please check the console output for error messages and ensure all prerequisites are correctly installed.
