@@ -16,15 +16,10 @@
 		{
 			get; set;
 		}
-		// Foreign key to Farm
 
-		public int FarmId
+		public ICollection<Products> Products
 		{
 			get; set;
-		}
-		public Farm Farm
-		{
-			get; set;
-		}
+		} // Navigation property
 	}
 }

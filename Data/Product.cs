@@ -31,17 +31,15 @@ namespace PROG7311_POE_Part2_ST10257863.Data
 			get; set;
 		}
 
-		[Required(ErrorMessage = "Farm selection is required.")]
-		public int FarmId
+		[Required(ErrorMessage = "Farmer is required.")]
+		public int FarmerId
 		{
 			get; set;
-		}
+		} // Foreign key property
 
-		//Farm nullable for form submissions
-		public Farm? Farm
+		public Farmer? Farmer
 		{
 			get; set;
-		}
+		} // Navigation property
 	}
-
 }

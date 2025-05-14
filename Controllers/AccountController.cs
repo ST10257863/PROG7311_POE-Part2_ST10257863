@@ -44,46 +44,6 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
-		public IActionResult Register() => View();
-
-		[HttpPost]
-		public async Task<IActionResult> Register(RegisterViewModel model)
-		{
-			if (!ModelState.IsValid)
-				return View(model);
-
-			var existingUser = await _userManager.FindByEmailAsync(model.Email);
-			if (existingUser != null)
-			{
-				ModelState.AddModelError("Email", "Email is already registered.");
-				return View(model);
-			}
-
-			var user = new ApplicationUser
-			{
-				UserName = model.Email,
-				Email = model.Email,
-				FirstName = model.FirstName,
-				LastName = model.LastName,
-				UserType = ApplicationUser.UserTypeEnum.Customer
-			};
-
-			var result = await _userManager.CreateAsync(user, model.Password);
-			if (result.Succeeded)
-			{
-				// Optionally sign in the user or redirect
-				return RedirectToAction("Index", "Home");
-			}
-
-			foreach (var error in result.Errors)
-			{
-				ModelState.AddModelError(string.Empty, error.Description);
-			}
-
-			return View(model);
-		}
-
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Logout()

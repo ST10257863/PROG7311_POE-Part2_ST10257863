@@ -1,63 +1,53 @@
 ﻿@model PROG7311_POE_Part2_ST10257863.Data.Products
 
 @{
-	ViewBag.Title = "Add Product";
-	var categories = ViewBag.Categories as List<string>;
-	var farms = ViewBag.Farms as List<PROG7311_POE_Part2_ST10257863.Data.Farm>;
+    ViewBag.Title = "Add Product";
+    var categories = ViewBag.Categories as List<string>;
 }
 
 <h2>Add Product</h2>
 @if (TempData["Message"] != null)
 {
-	<div class="alert alert-success">@TempData["Message"]</div>
+    <div class="alert alert-success">@TempData["Message"]</div>
 }
 @if (TempData["Error"] != null)
 {
-	<div class="alert alert-danger">@TempData["Error"]</div>
+    <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
 <form asp-action="AddProduct" method="post">
-	<div class="form-group mb-3">
-		<label asp-for="Name" class="form-label">Product Name</label>
-		<input asp-for="Name" class="form-control" required />
-		<span asp-validation-for="Name" class="text-danger"></span>
-	</div>
-	<div class="form-group mb-3">
-		<label asp-for="ProductionDate" class="form-label">Production Date</label>
-		<input asp-for="ProductionDate" type="date" class="form-control" required />
-		<span asp-validation-for="ProductionDate" class="text-danger"></span>
-	</div>
-	<div class="form-group mb-3">
-		<label asp-for="Category" class="form-label">Category</label>
-		<div class="input-group">
-			<select asp-for="Category" class="form-select" required>
-				<option value="">-- Select Category --</option>
-				@foreach (var cat in categories ?? new List<string>())
-				{
-					<option value="@cat">@cat</option>
-				}
-			</select>
-			<button type="button" class="btn btn-outline-secondary" onclick="window.location.href='@Url.Action("AddCategory", "Product")'">Add Category</button>
-		</div>
-		<span asp-validation-for="Category" class="text-danger"></span>
-	</div>
-	<div class="form-group mb-3">
-		<label asp-for="FarmId" class="form-label">Farm</label>
-		<select asp-for="FarmId" class="form-select" required>
-			<option value="">-- Select Farm --</option>
-			@foreach (var farm in farms ?? new List<PROG7311_POE_Part2_ST10257863.Data.Farm>())
-			{
-				<option value="@farm.Id">@farm.Name</option>
-			}
-		</select>
-		<span asp-validation-for="FarmId" class="text-danger"></span>
-	</div>
-	<div class="form-group mt-4">
-		<button type="submit" class="btn btn-primary">Submit</button>
-		<a asp-action="ProductView" class="btn btn-secondary ms-2">Cancel</a>
-	</div>
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label">Product Name</label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="ProductionDate" class="form-label">Production Date</label>
+        <input asp-for="ProductionDate" type="date" class="form-control" required />
+        <span asp-validation-for="ProductionDate" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <label asp-for="Category" class="form-label">Category</label>
+        <div class="input-group">
+            <select asp-for="Category" class="form-select" required>
+                <option value="">-- Select Category --</option>
+                @foreach (var cat in categories ?? new List<string>())
+                {
+                    <option value="@cat">@cat</option>
+                }
+            </select>
+            <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='@Url.Action("AddCategory", "Product")'">Add Category</button>
+        </div>
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+    <!-- Hidden FarmerId field -->
+    <input type="hidden" asp-for="FarmerId" />
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a asp-action="ProductView" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
 </form>
 
 @section Scripts {
-	<partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 }

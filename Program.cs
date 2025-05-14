@@ -23,8 +23,8 @@ builder.Services.AddControllersWithViews();
 // Authorization policies
 builder.Services.AddAuthorizationBuilder()
 	.AddPolicy("RequireEmployeeRole", policy => policy.RequireRole("Employee"))
-	.AddPolicy("RequireFarmerRole", policy => policy.RequireRole("Farmer"))
-	.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
+	.AddPolicy("RequireFarmerRole", policy => policy.RequireRole("Farmer"));
+
 
 var app = builder.Build();
 
@@ -61,7 +61,7 @@ async Task SeedRolesAndTestUsersAsync(IServiceProvider serviceProvider)
 	var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 	var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-	string[] roleNames = { "Employee", "Farmer", "Customer" };
+	string[] roleNames = { "Employee", "Farmer" };
 	string defaultPassword = "Test@123"; // Change as needed
 
 	// Ensure roles exist
@@ -78,7 +78,6 @@ async Task SeedRolesAndTestUsersAsync(IServiceProvider serviceProvider)
 	{
 			new { Email = "employee@test.com", Role = "Employee", FirstName = "Test", LastName = "Employee", UserType = ApplicationUser.UserTypeEnum.Employee },
 			new { Email = "farmer@test.com", Role = "Farmer", FirstName = "Test", LastName = "Farmer", UserType = ApplicationUser.UserTypeEnum.Farmer },
-			new { Email = "customer@test.com", Role = "Customer", FirstName = "Test", LastName = "Customer", UserType = ApplicationUser.UserTypeEnum.Customer }
 		};
 
 	foreach (var testUser in testUsers)
