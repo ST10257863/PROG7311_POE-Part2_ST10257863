@@ -14,16 +14,6 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			_logger = logger;
 		}
 
-		public IActionResult Index()
-		{
-			return View();
-		}
-
-		public IActionResult Privacy()
-		{
-			return View();
-		}
-
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{

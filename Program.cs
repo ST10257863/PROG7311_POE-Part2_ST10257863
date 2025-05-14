@@ -46,7 +46,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Product}/{action=ProductView}/{id?}");
+	pattern: "{controller=Account}/{action=Login}/{id?}");
 
 // --- Seed roles and test users ---
 using (var scope = app.Services.CreateScope())

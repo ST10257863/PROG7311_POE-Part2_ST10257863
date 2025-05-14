@@ -6,6 +6,7 @@ using System.Security.Claims;
 
 namespace PROG7311_POE_Part2_ST10257863.Controllers
 {
+	[Authorize]
 	public class ProductController : Controller
 	{
 		private readonly ApplicationDbContext _context;
