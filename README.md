@@ -23,13 +23,13 @@ Open a terminal in the project root directory and run:
 - Open the `appsettings.json` file and ensure the connection string is correct for your environment.
 - Run the following commands to apply migrations and create the database:
   ```
-  dotnet ef database update
+  Update-Database
   ```
 
 4. **Run the Application**
 dotnet run
 
-The application should now be running on `https://localhost:5001` (or a similar port).
+The application should now be running on `https://localhost:####` (or a similar port).
 
 ## Testing the Application
 
