@@ -3,7 +3,7 @@
 @{
 	ViewData["Title"] = "Products";
 	var categories = ViewBag.Categories as List<string>;
-	var farms = ViewBag.Farms as List<PROG7311_POE_Part2_ST10257863.Data.Farm>;
+	var farmers = ViewBag.Farmers as List<PROG7311_POE_Part2_ST10257863.Data.Farmer>;
 	var sortedProducts = Model.OrderBy(p => p.Name).ToList();
 }
 
@@ -18,8 +18,6 @@
 	<div class="alert alert-danger">@TempData["Error"]</div>
 }
 
-
-
 <form id="filterForm" onsubmit="return false;">
 	<input type="text" id="searchString" placeholder="Search by name..." />
 	<select id="category">
@@ -29,11 +27,13 @@
 			<option value="@cat">@cat</option>
 		}
 	</select>
-	<select id="farmId">
-		<option value="">All Farms</option>
-		@foreach (var farm in farms ?? new List<PROG7311_POE_Part2_ST10257863.Data.Farm>())
+	<select id="farmerId">
+		<option value="">All Farmers</option>
+		@foreach (var farmer in farmers ?? new List<PROG7311_POE_Part2_ST10257863.Data.Farmer>())
 		{
-			<option value="@farm.Id">@farm.Name</option>
+			<option value="@farmer.Id">
+				@(farmer.User != null ? $"{farmer.User.FirstName} {farmer.User.LastName}" : $"Farmer #{farmer.Id}")
+			</option>
 		}
 	</select>
 	<button type="button" onclick="filterTable()">Filter</button>
@@ -46,28 +46,38 @@
 else
 {
 	<div style="max-height: 70vh; overflow-y: auto;">
-
 		<table class="table table-striped" id="productsTable">
 			<thead>
 				<tr>
 					<th>Product Name</th>
 					<th>Category</th>
 					<th>Production Date</th>
-					<th>Farm Name</th>
+					<th>Farmer</th>
 				</tr>
 			</thead>
 			<tbody>
 				@foreach (var product in sortedProducts)
 				{
-					<tr data-category="@product.Category" data-farm="@product.FarmId" data-name="@product.Name">
+					<tr data-category="@product.Category" data-farmer="@product.FarmerId" data-name="@product.Name">
 						<td>@product.Name</td>
 						<td>@product.Category</td>
 						<td>@product.ProductionDate.ToString("yyyy-MM-dd")</td>
-						<td>@product.Farm?.Name</td>
+						<td>
+							@(product.Farmer?.User != null
+														? $"{product.Farmer.User.FirstName} {product.Farmer.User.LastName}"
+														: $"Farmer #{product.FarmerId}")
+						</td>
 					</tr>
 				}
 			</tbody>
 		</table>
+	</div>
+}
+
+@if (User.IsInRole("Farmer"))
+{
+	<div class="mb-3">
+		<a asp-action="AddProductView" class="btn btn-success">Add Product</a>
 	</div>
 }
 
@@ -76,13 +86,14 @@ else
 		function filterTable() {
 			var search = document.getElementById('searchString').value.toLowerCase();
 			var category = document.getElementById('category').value;
-			var farmId = document.getElementById('farmId').value;
+			var farmerIdElem = document.getElementById('farmerId');
+			var farmerId = farmerIdElem ? farmerIdElem.value : "";
 
 			var rows = document.querySelectorAll('#productsTable tbody tr');
 			rows.forEach(function(row) {
 				var name = row.getAttribute('data-name').toLowerCase();
 				var rowCategory = row.getAttribute('data-category');
-				var rowFarm = row.getAttribute('data-farm');
+				var rowFarmer = row.getAttribute('data-farmer');
 
 				var match = true;
 
@@ -92,7 +103,7 @@ else
 				if (category && rowCategory !== category) {
 					match = false;
 				}
-				if (farmId && rowFarm !== farmId) {
+				if (farmerId && rowFarmer !== farmerId) {
 					match = false;
 				}
 
@@ -102,6 +113,8 @@ else
 
 		document.getElementById('searchString').addEventListener('input', filterTable);
 		document.getElementById('category').addEventListener('change', filterTable);
-		document.getElementById('farmId').addEventListener('change', filterTable);
+		if (document.getElementById('farmerId')) {
+			document.getElementById('farmerId').addEventListener('change', filterTable);
+		}
 	</script>
 }
