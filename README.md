@@ -21,8 +21,17 @@ Open a terminal in the project root directory and run:
   dotnet restore
   ```
 3. **Database Setup**
-- Open the `appsettings.json` file and ensure the connection string is correct for your environment.
-- Run the following commands to apply migrations and create the database:
+- Ensure SQL Server is installed and running on your machine.
+- Open the `appsettings.json` file and locate the `ConnectionStrings` section.
+- Update the `DefaultConnection` string to match your SQL Server instance. For example:
+  ```json
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=AgriEnergyConnect;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+  ```
+
+4. **Apply Database Migrations**
+Open a terminal in the project root directory and run:
   ```
   Update-Database
   ```
@@ -72,5 +81,23 @@ If logged in as a farmer:
 - Use the "Logout" button to end your session.
 
 ## Troubleshooting
-- If you encounter any issues with database migrations, try deleting the `Migrations` folder and running `Add-Migration InitialCreate` followed by `Update-Database`.
-- For any other issues, please check the console output for error messages and ensure all prerequisites are correctly installed.
+
+- If you encounter issues with database connections:
+  - Ensure SQL Server is running.
+  - Verify the connection string in `appsettings.json` is correct for your environment.
+  - Check that you have necessary permissions to create and modify databases.
+
+- If you face problems with migrations:
+  - Try deleting the `Migrations` folder.
+  - Run `dotnet ef migrations add InitialCreate` to create a new initial migration.
+  - Then run `dotnet ef database update` to apply the migration.
+
+- For any other issues:
+  - Check the console output for error messages.
+  - Ensure all prerequisites are correctly installed.
+  - Verify that you're using the correct .NET SDK version (9.0).
+
+  ## Additional Notes
+
+- This application uses SQL Server. Ensure you have the necessary SQL Server instance and permissions set up before running the application.
+- The database will be automatically created and seeded with initial data when you run the migrations.
