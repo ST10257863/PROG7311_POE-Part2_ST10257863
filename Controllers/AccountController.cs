@@ -17,7 +17,22 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public IActionResult Login() => View();
+		public IActionResult Login()
+		{
+			// Check if there's a success message in TempData
+			if (TempData["SuccessMessage"] != null)
+			{
+				ViewBag.SuccessMessage = TempData["SuccessMessage"];
+			}
+
+			// Check if there's an error message in TempData
+			if (TempData["ErrorMessage"] != null)
+			{
+				ViewBag.ErrorMessage = TempData["ErrorMessage"];
+			}
+
+			return View();
+		}
 
 		[HttpPost]
 		[AllowAnonymous]

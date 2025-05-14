@@ -1,4 +1,4 @@
-﻿@model PROG7311_POE_Part2_ST10257863.Models.LoginViewModel
+﻿@model LoginViewModel
 
 @{
 	ViewData["Title"] = "Login";
@@ -6,9 +6,18 @@
 
 <h2>@ViewData["Title"]</h2>
 
-@if (TempData["ErrorMessage"] != null)
+@if (ViewBag.SuccessMessage != null)
 {
-	<div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+	<div class="alert alert-success">
+		@ViewBag.SuccessMessage
+	</div>
+}
+
+@if (ViewBag.ErrorMessage != null)
+{
+	<div class="alert alert-danger">
+		@ViewBag.ErrorMessage
+	</div>
 }
 
 <form asp-action="Login" method="post" class="mt-4">
