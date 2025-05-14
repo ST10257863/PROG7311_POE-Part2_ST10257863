@@ -37,7 +37,7 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 
 			if (result.Succeeded)
 			{
-				return RedirectToAction("Index", "Home");
+				return RedirectToAction("ProductView", "Product");
 			}
 
 			ModelState.AddModelError(string.Empty, "Invalid login attempt.");
@@ -49,7 +49,7 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 		public async Task<IActionResult> Logout()
 		{
 			await _signInManager.SignOutAsync();
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction("Login", "Account");
 		}
 
 
