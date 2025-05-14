@@ -17,8 +17,9 @@ This project is an ASP.NET Core web application for managing agricultural produc
   ```
 2. **Restore Dependencies**
 Open a terminal in the project root directory and run:	
+  ```  
   dotnet restore
-  
+  ```
 3. **Database Setup**
 - Open the `appsettings.json` file and ensure the connection string is correct for your environment.
 - Run the following commands to apply migrations and create the database:
@@ -27,7 +28,9 @@ Open a terminal in the project root directory and run:
   ```
 
 4. **Run the Application**
-dotnet run
+  ```
+  dotnet run
+  ```
 
 The application should now be running on `https://localhost:####` (or a similar port).
 
