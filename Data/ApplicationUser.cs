@@ -1,37 +1,42 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using PROG7311_POE_Part2_ST10257863.Data;
+using System.ComponentModel.DataAnnotations;
 
-public class ApplicationUser : IdentityUser
+namespace PROG7311_POE_Part2_ST10257863.Data
 {
-	public enum UserTypeEnum
+	public class ApplicationUser : IdentityUser
 	{
-		Farmer,
-		Employee
-	}
+		public enum UserTypeEnum
+		{
+			Farmer,
+			Employee
+		}
 
-	public UserTypeEnum UserType
-	{
-		get; set;
-	}
+		[Required(ErrorMessage = "User type is required.")]
+		public UserTypeEnum UserType
+		{
+			get; set;
+		}
 
-	public string FirstName
-	{
-		get; set;
-	} = string.Empty;
-	public string LastName
-	{
-		get; set;
-	} = string.Empty;
+		[Required(ErrorMessage = "First name is required.")]
+		[StringLength(50, ErrorMessage = "First name cannot exceed 50 characters.")]
+		[Display(Name = "First Name")]
+		public string FirstName { get; set; } = string.Empty;
 
-	// Navigation property for Employee profile
-	public Employee? EmployeeProfile
-	{
-		get; set;
-	}
+		[Required(ErrorMessage = "Last name is required.")]
+		[StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters.")]
+		[Display(Name = "Last Name")]
+		public string LastName { get; set; } = string.Empty;
 
-	// Navigation property for Farmer profile
-	public Farmer? FarmerProfile
-	{
-		get; set;
+		// Navigation property for Employee profile
+		public Employee? EmployeeProfile
+		{
+			get; set;
+		}
+
+		// Navigation property for Farmer profile
+		public Farmer? FarmerProfile
+		{
+			get; set;
+		}
 	}
 }
