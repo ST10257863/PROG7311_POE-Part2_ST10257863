@@ -23,7 +23,7 @@
 	</div>
 	<div class="form-group mb-3">
 		<label asp-for="ProductionDate" class="form-label">Production Date</label>
-		<input asp-for="ProductionDate" type="date" class="form-control" required />
+		<input asp-for="ProductionDate" type="date" class="form-control" required value="@DateTime.Now.ToString("yyyy-MM-dd")" />
 		<span asp-validation-for="ProductionDate" class="text-danger"></span>
 	</div>
 	<div class="form-group mb-3">
@@ -106,6 +106,10 @@
 			.catch(error => {
 				errorDiv.textContent = error.message;
 			});
+		});
+		document.addEventListener('DOMContentLoaded', function() {
+			var today = new Date().toISOString().split('T')[0];
+			document.getElementById('ProductionDate').value = today;
 		});
 	</script>
 }
