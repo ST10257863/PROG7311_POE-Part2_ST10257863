@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_POE_Part2_ST10257863.Data;
+using PROG7311_POE_Part2_ST10257863.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 	options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
+// Services
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IDatabaseManagementService, DatabaseManagementService>();
 
 var app = builder.Build();
