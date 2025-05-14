@@ -81,6 +81,12 @@ else
 	</div>
 }
 
+@if (User.IsInRole("Employee"))
+{
+	<div class="mt-3">
+		<a asp-controller="DatabaseManagement" asp-action="DatabaseManagement" class="btn btn-warning">Database Management</a>
+	</div>
+}
 @section Scripts {
 	<script>
 		function filterTable() {
