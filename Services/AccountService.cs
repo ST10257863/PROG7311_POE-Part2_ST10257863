@@ -5,6 +5,9 @@ using PROG7311_POE_Part2_ST10257863.Services.Interfaces;
 
 namespace PROG7311_POE_Part2_ST10257863.Services
 {
+	/// <summary>
+	/// Provides services for account-related operations such as login, logout, and user creation.
+	/// </summary>
 	public class AccountService : IAccountService
 	{
 		private readonly UserManager<ApplicationUser> _userManager;
@@ -12,6 +15,13 @@ namespace PROG7311_POE_Part2_ST10257863.Services
 		private readonly RoleManager<IdentityRole> _roleManager;
 		private readonly ApplicationDbContext _context;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AccountService"/> class.
+		/// </summary>
+		/// <param name="userManager">The user manager for handling user-related operations.</param>
+		/// <param name="signInManager">The sign-in manager for handling authentication.</param>
+		/// <param name="roleManager">The role manager for handling role-related operations.</param>
+		/// <param name="context">The database context.</param>
 		public AccountService(
 			UserManager<ApplicationUser> userManager,
 			SignInManager<ApplicationUser> signInManager,
@@ -24,6 +34,11 @@ namespace PROG7311_POE_Part2_ST10257863.Services
 			_context = context;
 		}
 
+		/// <summary>
+		/// Attempts to log in a user with the provided credentials.
+		/// </summary>
+		/// <param name="model">The login view model containing user credentials.</param>
+		/// <returns>A <see cref="SignInResult"/> indicating the result of the login attempt.</returns>
 		public async Task<SignInResult> LoginAsync(LoginViewModel model)
 		{
 			var user = await _userManager.FindByEmailAsync(model.Email);
@@ -36,11 +51,19 @@ namespace PROG7311_POE_Part2_ST10257863.Services
 				user.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
 		}
 
+		/// <summary>
+		/// Logs out the current user.
+		/// </summary>
 		public async Task LogoutAsync()
 		{
 			await _signInManager.SignOutAsync();
 		}
 
+		/// <summary>
+		/// Adds a new farmer user to the system.
+		/// </summary>
+		/// <param name="model">The view model containing the new farmer's details.</param>
+		/// <returns>An <see cref="IdentityResult"/> indicating the result of the operation.</returns>
 		public async Task<IdentityResult> AddFarmerAsync(AddFarmerViewModel model)
 		{
 			var existingUser = await _userManager.FindByEmailAsync(model.Email);

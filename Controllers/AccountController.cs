@@ -6,15 +6,26 @@ using PROG7311_POE_Part2_ST10257863.Services.Interfaces;
 
 namespace PROG7311_POE_Part2_ST10257863.Controllers
 {
+	/// <summary>
+	/// Controller responsible for handling user account-related operations.
+	/// </summary>
 	public class AccountController : Controller
 	{
 		private readonly IAccountService _accountService;
 
+		/// <summary>
+		/// Initializes a new instance of the AccountController.
+		/// </summary>
+		/// <param name="accountService">The account service dependency.</param>
 		public AccountController(IAccountService accountService)
 		{
 			_accountService = accountService;
 		}
 
+		/// <summary>
+		/// Displays the login view.
+		/// </summary>
+		/// <returns>The login view.</returns>
 		[HttpGet]
 		[AllowAnonymous]
 		public IActionResult Login()
@@ -34,6 +45,11 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Handles the login process.
+		/// </summary>
+		/// <param name="model">The login view model containing user credentials.</param>
+		/// <returns>Redirects to ProductView if login is successful, otherwise returns to the login view with errors.</returns>
 		[HttpPost]
 		[AllowAnonymous]
 		public async Task<IActionResult> Login(LoginViewModel model)
@@ -52,6 +68,10 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// Handles the logout process.
+		/// </summary>
+		/// <returns>Redirects to the login view after logging out.</returns>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Logout()
@@ -60,10 +80,19 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			return RedirectToAction("Login", "Account");
 		}
 
+		/// <summary>
+		/// Displays the add farmer view.
+		/// </summary>
+		/// <returns>The add farmer view.</returns>
 		[HttpGet]
 		[Authorize(Roles = "Employee")]
 		public IActionResult AddFarmer() => View("AddFarmer");
 
+		/// <summary>
+		/// Handles the process of adding a new farmer account.
+		/// </summary>
+		/// <param name="model">The add farmer view model containing new farmer details.</param>
+		/// <returns>Redirects to AddFarmer view with a success message if farmer is added successfully, otherwise returns to the view with errors.</returns>
 		[HttpPost]
 		[Authorize(Roles = "Employee")]
 		public async Task<IActionResult> AddFarmer(AddFarmerViewModel model)
