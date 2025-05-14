@@ -11,10 +11,10 @@ This project is an ASP.NET Core web application for managing agricultural produc
 ## Setup Instructions
 
 1. **Clone the Repository**
-```
-git clone https://github.com/your-username/PROG7311_POE-Part2_ST10257863.git
-cd PROG7311_POE-Part2_ST10257863
-```
+  ```
+  git clone https://github.com/your-username/PROG7311_POE-Part2_ST10257863.git
+  cd PROG7311_POE-Part2_ST10257863
+  ```
 2. **Restore Dependencies**
 Open a terminal in the project root directory and run:	
   dotnet restore
