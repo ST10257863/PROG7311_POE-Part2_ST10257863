@@ -29,17 +29,17 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			_signInManager = signInManager;
 		}
 
-		/// <summary>
-		/// Displays the database management view.
-		/// </summary>
-		/// <remarks>
-		/// This action method is responsible for rendering the database management page.
-		/// It doesn't perform any data manipulation or processing.
-		/// </remarks>
-		/// <returns>
-		/// An <see cref="IActionResult"/> that renders the default view for database management.
-		/// </returns>
-		public IActionResult DatabaseManagement()
+        /// <summary>
+        /// Displays the database management view.
+        /// </summary>
+        /// <remarks>
+        /// This action method is responsible for rendering the database management page.
+        /// It doesn't perform any data manipulation or processing.
+        /// </remarks>
+        /// <returns>
+        /// An <see cref="IActionResult"/> that renders the default view for database management.
+        /// </returns>
+        public IActionResult DatabaseManagement()
 		{
 			return View();
 		}
@@ -58,7 +58,6 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
         /// A <see cref="Task{IActionResult}"/> representing the asynchronous operation.
         /// The result is a redirect to the "Login" action of the "Account" controller.
         /// </returns>
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> ResetDatabase()
         {

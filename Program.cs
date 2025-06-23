@@ -11,6 +11,12 @@ ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var initService = scope.ServiceProvider.GetRequiredService<IInitializationService>();
+    await initService.InitializeAsync();
+}
+
 // --- Configure Middleware ---
 ConfigureMiddleware(app, app.Environment);
 
@@ -51,6 +57,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 	services.AddScoped<IAccountService, AccountService>();
 	services.AddScoped<IProductService, ProductService>();
 	services.AddScoped<IDatabaseManagementService, DatabaseManagementService>();
+    services.AddScoped<IInitializationService, InitializationService>();
 }
 
 void ConfigureMiddleware(WebApplication app, IWebHostEnvironment env)
