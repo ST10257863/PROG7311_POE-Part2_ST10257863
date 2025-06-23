@@ -44,35 +44,45 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
 			return View();
 		}
 
-		/// <summary>
-		/// Resets the database, repopulates it, and signs out the current user.
-		/// </summary>
-		/// <remarks>
-		/// This method is triggered by an HTTP POST request. It attempts to reset the database
-		/// using the database management service, signs out the current user, and then redirects
-		/// to the login page. If successful, a success message is stored in TempData. If an error
-		/// occurs, an error message is stored instead.
-		/// </remarks>
-		/// <returns>
-		/// A <see cref="Task{IActionResult}"/> representing the asynchronous operation.
-		/// The result is a redirect to the "Login" action of the "Account" controller.
-		/// </returns>
-		[HttpPost]
-		public async Task<IActionResult> ResetDatabase()
-		{
-			try
-			{
-				await _databaseManagementService.ResetDatabaseAsync();
-				await _signInManager.SignOutAsync();
+        /// <summary>
+        /// Resets the database, repopulates it, and signs out the current user if one is signed in.
+        /// </summary>
+        /// <remarks>
+        /// This method is triggered by an HTTP POST request. It attempts to reset the database
+        /// using the database management service. If a user is signed in, it signs them out.
+        /// Then it redirects to the login page. If successful, a success message is stored in TempData.
+        /// If an error occurs, an error message is stored instead.
+        /// This method is accessible to all users, including unregistered ones, for testing purposes.
+        /// </remarks>
+        /// <returns>
+        /// A <see cref="Task{IActionResult}"/> representing the asynchronous operation.
+        /// The result is a redirect to the "Login" action of the "Account" controller.
+        /// </returns>
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ResetDatabase()
+        {
+            try
+            {
+                await _databaseManagementService.ResetDatabaseAsync();
 
-				TempData["SuccessMessage"] = "Database has been reset and repopulated successfully. You have been logged out.";
-			}
-			catch (Exception ex)
-			{
-				TempData["ErrorMessage"] = $"An error occurred while resetting the database: {ex.Message}";
-			}
+                // Check if there's a signed-in user before attempting to sign out
+                if (_signInManager.IsSignedIn(User))
+                {
+                    await _signInManager.SignOutAsync();
+                    TempData["SuccessMessage"] = "Database has been reset and repopulated successfully. You have been logged out.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Database has been reset and repopulated successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while resetting the database: {ex.Message}";
+            }
 
-			return RedirectToAction("Login", "Account");
-		}
-	}
+            return RedirectToAction("Login", "Account");
+        }
+    }
 }
