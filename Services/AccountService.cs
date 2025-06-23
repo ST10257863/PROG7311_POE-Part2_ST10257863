@@ -101,5 +101,59 @@ namespace PROG7311_POE_Part2_ST10257863.Services
 
 			return result;
 		}
-	}
+
+        /// <summary>
+        /// Registers a new employee user in the system.
+        /// </summary>
+        /// <param name="model">The RegisterViewModel containing the new employee's registration details.</param>
+        /// <returns>
+        /// An IdentityResult object indicating the outcome of the registration process.
+        /// If successful, the result will indicate success. If unsuccessful, it will contain error information.
+        /// </returns>
+        /// <remarks>
+        /// This method performs the following steps:
+        /// 1. Checks if the email is already registered.
+        /// 2. Creates a new ApplicationUser with the provided details.
+        /// 3. Attempts to create the user in the system.
+        /// 4. If successful, ensures the "Employee" role exists and assigns it to the user.
+        /// 5. Creates and saves a new Employee entity associated with the user.
+        /// </remarks>
+        public async Task<IdentityResult> RegisterAsync(RegisterViewModel model)
+        {
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Email is already registered." });
+            }
+
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                UserType = ApplicationUser.UserTypeEnum.Employee
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                if (!await _roleManager.RoleExistsAsync("Employee"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Employee"));
+                }
+
+                await _userManager.AddToRoleAsync(user, "Employee");
+
+                var employee = new Employee
+                {
+                    UserId = user.Id
+                };
+                _context.Employees.Add(employee);
+                await _context.SaveChangesAsync();
+            }
+
+            return result;
+        }
+    }
 }
