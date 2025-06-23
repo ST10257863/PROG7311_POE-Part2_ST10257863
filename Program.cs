@@ -22,6 +22,20 @@ ConfigureMiddleware(app, app.Environment);
 
 app.Run();
 
+/// <summary>
+/// Configures the services for the application.
+/// </summary>
+/// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+/// <param name="configuration">The configuration of the application.</param>
+/// <remarks>
+/// This method sets up various services including:
+/// - Database context
+/// - Identity system
+/// - MVC and Razor Pages
+/// - Authorization policies
+/// - Cookie configuration
+/// - Custom application services
+/// </remarks>
 void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
 	// Database context
@@ -60,6 +74,21 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddScoped<IInitializationService, InitializationService>();
 }
 
+/// <summary>
+/// Configures the middleware pipeline for the application.
+/// </summary>
+/// <param name="app">The <see cref="WebApplication"/> to configure.</param>
+/// <param name="env">The <see cref="IWebHostEnvironment"/> representing the hosting environment.</param>
+/// <remarks>
+/// This method sets up the middleware components in the following order:
+/// 1. Exception handling and HSTS (in non-development environments)
+/// 2. HTTPS redirection
+/// 3. Static file serving
+/// 4. Routing
+/// 5. Authentication
+/// 6. Authorization
+/// 7. Default controller route
+/// </remarks>
 void ConfigureMiddleware(WebApplication app, IWebHostEnvironment env)
 {
 	if (!env.IsDevelopment())

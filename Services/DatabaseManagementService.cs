@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PROG7311_POE_Part2_ST10257863.Data;
+using PROG7311_POE_Part2_ST10257863.Services.Interfaces;
 
 public class DatabaseManagementService : IDatabaseManagementService
 {

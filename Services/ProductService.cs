@@ -69,7 +69,7 @@ namespace PROG7311_POE_Part2_ST10257863.Services
 		/// <returns>The farmer associated with the given user ID.</returns>
 		public async Task<Farmer> GetFarmerByUserIdAsync(string userId)
 		{
-			return await _context.Farmers.FirstOrDefaultAsync(f => f.UserId == userId);
+            return await _context.Farmers.FirstOrDefaultAsync(f => f.UserId == userId);
 		}
 
 		/// <summary>
