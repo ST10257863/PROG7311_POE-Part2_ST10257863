@@ -79,6 +79,14 @@ namespace PROG7311_POE_Part2_ST10257863.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Handles the registration process for new users.
+        /// </summary>
+        /// <param name="model">The register view model containing user credentials.</param>
+        /// <returns>
+        /// Redirects to the login view if registration is successful and displays a success message.
+        /// Returns to the registration view with errors if the model state is not valid.
+        /// </returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
